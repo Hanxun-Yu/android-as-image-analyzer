@@ -1,0 +1,4 @@
+include ':libImage'
+include ':app'
+include ':lib-android-as-module-lib-common-util'
+rootProject.name = "ImageAnalyzer"

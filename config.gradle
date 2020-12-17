@@ -1,0 +1,30 @@
+//# config all projects
+
+ext {
+    props = [
+            version          : "1.0.0",
+//            nexusDomain: "http://172.16.193.178:8081"
+            libandroidVersion: "28.0.0", //28.0.0
+            localMaven       : 'file://' + new File(System.getProperty('user.home'), '.m2/repository').absolutePath,
+    ]
+
+    java = [sourceCompatibility: JavaVersion.VERSION_1_8,
+            targetCompatibility: JavaVersion.VERSION_1_8]
+
+    android = [compileSdkVersion: 28,
+               buildToolsVersion: "28.0.2",
+               minSdkVersion    : 21,
+               targetSdkVersion : 28,
+               versionCode      : 1,
+               versionName      : props.version]
+
+    dependencies = [
+            "tools-build-gradle": "com.android.tools.build:gradle:3.3.2",
+            "appcompat"         : 'androidx.appcompat:appcompat:1.1.0',
+            "multidex"          : 'com.android.support:multidex:1.0.1',
+            "junit"             : 'junit:junit:4.+',
+            "android-test"      : ['androidx.test.ext:junit:1.1.1',
+                                   'androidx.test.espresso:espresso-core:3.2.0'],
+            "gson"              : 'com.google.code.gson:gson:2.7'
+    ]
+}

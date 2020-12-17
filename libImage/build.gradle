@@ -1,0 +1,50 @@
+apply plugin: 'com.android.library'
+
+
+android {
+    compileSdkVersion rootProject.ext.android['compileSdkVersion']
+    buildToolsVersion rootProject.ext.android['buildToolsVersion']
+
+    defaultConfig {
+        minSdkVersion rootProject.ext.android['minSdkVersion']
+        targetSdkVersion rootProject.ext.android['targetSdkVersion']
+        versionCode rootProject.ext.android['versionCode']
+        versionName rootProject.ext.android['versionName']
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+
+        externalNativeBuild {
+            ndk {
+                abiFilters 'armeabi-v7a'
+            }
+        }
+    }
+    externalNativeBuild {
+        cmake {
+            path "src/main/cpp/CMakeLists.txt"
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility rootProject.ext.java['sourceCompatibility']
+        targetCompatibility rootProject.ext.java['targetCompatibility']
+    }
+    sourceSets.main {
+        //这个配置会导致apk或aar打包时把该目录内的so打包进apk
+        //如果是外部so可以配置，如果是编译出的so不需要
+        jniLibs.srcDirs 'libs'
+        jni.srcDirs = [] // This prevents the auto generation of Android.mk
+    }
+}
+
+dependencies {
+
+    implementation rootProject.ext.dependencies['appcompat']
+    testImplementation rootProject.ext.dependencies['junit']
+    androidTestImplementation rootProject.ext.dependencies['android-test']
+}

@@ -1,0 +1,61 @@
+apply plugin:  'com.android.application'
+
+
+android {
+    compileSdkVersion rootProject.ext.android['compileSdkVersion']
+    buildToolsVersion rootProject.ext.android['buildToolsVersion']
+
+    defaultConfig {
+        applicationId "com.yuhanxun.imageanalyzer.app"
+
+        minSdkVersion rootProject.ext.android['minSdkVersion']
+        targetSdkVersion rootProject.ext.android['targetSdkVersion']
+        versionCode rootProject.ext.android['versionCode']
+        versionName rootProject.ext.android['versionName']
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled true
+
+    }
+
+//    signingConfigs {
+//        /*common {
+//            keyAlias 'Wissen'
+//            keyPassword 'wst&#*W6&j&B%1Gu'
+//            storeFile file('../key/mapa2.jks')
+//            storePassword 'wst&#*W6&j&B%1Gu'
+//        }*/
+//        //系统签名
+//        common {
+//            keyAlias 'mapa_platform'
+//            keyPassword 'a^bc%123%Mapa%!'
+//            storeFile file('../key/mapa_system.jks')
+//            storePassword 'a^bc%123%Mapa%!'
+//        }
+//    }
+
+    buildTypes {
+        release {
+//            signingConfig signingConfigs.common    //正试包签名
+            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug {
+//            signingConfig signingConfigs.common    //正试包签名
+            minifyEnabled false
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility rootProject.ext.java['sourceCompatibility']
+        targetCompatibility rootProject.ext.java['targetCompatibility']
+    }
+}
+
+dependencies {
+
+    implementation rootProject.ext.dependencies['appcompat']
+    testImplementation rootProject.ext.dependencies['junit']
+    androidTestImplementation rootProject.ext.dependencies['android-test']
+
+
+}
