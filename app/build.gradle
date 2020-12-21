@@ -6,7 +6,7 @@ android {
     buildToolsVersion rootProject.ext.android['buildToolsVersion']
 
     defaultConfig {
-        applicationId "com.yuhanxun.imageanalyzer.app"
+        applicationId "org.yuhanxun.imageanalyzer.app"
 
         minSdkVersion rootProject.ext.android['minSdkVersion']
         targetSdkVersion rootProject.ext.android['targetSdkVersion']
@@ -57,5 +57,6 @@ dependencies {
     testImplementation rootProject.ext.dependencies['junit']
     androidTestImplementation rootProject.ext.dependencies['android-test']
 
-
+    implementation project(':libImage')
+    implementation project(':lib-android-as-module-lib-common-util')
 }
