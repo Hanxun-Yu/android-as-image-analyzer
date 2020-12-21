@@ -39,7 +39,8 @@ public class BitmapSwitcher {
         YUV420P_I420,
         YUV_YV12,
         RGB_888,
-        //        ARGB_8888,
+        ARGB_8888,
+        ABGR_8888,
         BGRA_8888,
         RGBA_8888
     }
@@ -65,8 +66,25 @@ public class BitmapSwitcher {
             return rgba8888ToRGB888(bmpRawData, width, height);
         }
 
+        if (src == Format.RGBA_8888 && target == Format.ABGR_8888) {
+            return rgba8888ToABGR8888(bmpRawData, width, height);
+        }
 
-        return null;
+        throw new IllegalArgumentException();
+    }
+
+    public static byte[] rgba8888ToABGR8888(byte[] bmpRawData, int width, int height) {
+        byte[] ret = new byte[width * height * 4];
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                int index = 4 * (row * width + col);
+                ret[index] = bmpRawData[index + 3]; //A
+                ret[index + 1] = bmpRawData[index + 2];//B
+                ret[index + 2] = bmpRawData[index + 1];//G
+                ret[index + 3] = bmpRawData[index];//R
+            }
+        }
+        return ret;
     }
 
     private static byte[] nv21ToRGBA8888(byte[] bmpRawData, int width, int height) {
@@ -95,10 +113,12 @@ public class BitmapSwitcher {
 
     private static byte[] rgba8888ToRGB888(byte[] bmpRawData, int width, int height) {
         byte[] ret = new byte[width * height * 3];
+
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 int rgbIndex = 3 * (row * width + col);
                 int rgbaIndex = 4 * (row * width + col);
+                //discard A
                 ret[rgbIndex] = bmpRawData[rgbaIndex];
                 ret[rgbIndex + 1] = bmpRawData[rgbaIndex + 1];
                 ret[rgbIndex + 2] = bmpRawData[rgbaIndex + 2];

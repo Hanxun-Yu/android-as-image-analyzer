@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 
 /**
@@ -37,6 +38,18 @@ public class BitmapAndroid {
         }
         return argb;
     }
+
+    public static Bitmap rgba8888ToBitmap(byte[] rawData, int width,int height) {
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        //bitmap接收 RGBA
+        bitmap.copyPixelsFromBuffer(ByteBuffer.wrap(rawData));
+        return bitmap;
+    }
+
+
+
+
+
 
 
 }

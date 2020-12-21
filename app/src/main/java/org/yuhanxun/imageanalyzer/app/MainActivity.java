@@ -2,6 +2,7 @@ package org.yuhanxun.imageanalyzer.app;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -11,8 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 
+import org.yuhanxun.imageanalyzer.libimage.BitmapAndroid;
 import org.yuhanxun.imageanalyzer.libimage.BitmapSwitcher;
 import org.yuhanxun.imageanalyzer.libimage.ImageFileWrapper;
+import org.yuhanxun.libcommonutil.dialog.PayConfirmDialog;
 import org.yuhanxun.libcommonutil.file.AndroidResRW;
 
 import java.io.File;
@@ -40,8 +43,9 @@ public class MainActivity extends AppCompatActivity {
     private void doTest() {
         logD("doTest()");
 //        testNV21ToBGRA();
-        testNV21ToRGBA_RGB();
+//        testNV21ToRGBA_RGB();
 //        testLibyuvNV21ToARGB();
+        testRGBAToBitmapRender();
     }
 
     private void testNV21ToRGBA_RGB() {
@@ -77,9 +81,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void testARGBToBitmapRender() {
+    private void testRGBAToBitmapRender() {
+        int w = 150;
+        int h = 150;
+        String assetFileName = "nv21_150x150.yuv";
         //2.把argb塞入 AndroidBitmap，使用ImageView 观察显示
+        byte[] nv21 = AndroidResRW.getByteArrFromAssets(this, assetFileName);
+        byte[] rgba = BitmapSwitcher.doSwitch(nv21, w, h,
+                BitmapSwitcher.Format.YUV420SP_NV21, BitmapSwitcher.Format.RGBA_8888);
 
+        Bitmap bitmap = BitmapAndroid.rgba8888ToBitmap(rgba, w, h);
+
+        this.mImageView.setImageBitmap(bitmap);
     }
 
     /**
