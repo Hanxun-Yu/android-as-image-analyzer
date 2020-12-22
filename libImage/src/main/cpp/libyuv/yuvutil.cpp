@@ -12,44 +12,14 @@ void bgra_to_ARGB(uint8 *bgraArr, int width, int height);
 void swap_br_in_RGBA_BGRA(uint8 *bgraArr, int width, int height);
 
 
-JNIEXPORT jint JNICALL argb8888ToYuvNV21
+
+JNIEXPORT jint JNICALL bgra8888ToYuvNV12
         (JNIEnv *env, jclass clazz, jbyteArray src, jbyteArray target,
          jint width, jint height) {
     jbyte *src_data = env->GetByteArrayElements(src, JNI_FALSE);
     jbyte *dst_data = env->GetByteArrayElements(target, JNI_FALSE);
 
-    uint8 *argb = reinterpret_cast<uint8 *>(src_data);
-
-    uint8 *nv21_y = reinterpret_cast<uint8 *>(dst_data);
-    int nv21_y_size = width * height;
-    uint8 *nv21_vu = nv21_y + nv21_y_size;
-
-
-//    int ARGBToNV21(const uint8_t* src_argb,
-//                   int src_stride_argb,
-//                   uint8_t* dst_y,
-//                   int dst_stride_y,
-//                   uint8_t* dst_vu,
-//                   int dst_stride_vu,
-//                   int width,
-//                   int height);
-    libyuv::ARGBToNV21(argb, width * 4,
-                       nv21_y, width,
-                       nv21_vu, width,
-                       width, height);
-
-    env->ReleaseByteArrayElements(src, src_data, NULL);
-    env->ReleaseByteArrayElements(target, dst_data, NULL);
-    return JNI_OK;
-}
-
-JNIEXPORT jint JNICALL argb8888ToYuvNV12
-        (JNIEnv *env, jclass clazz, jbyteArray src, jbyteArray target,
-         jint width, jint height) {
-    jbyte *src_data = env->GetByteArrayElements(src, JNI_FALSE);
-    jbyte *dst_data = env->GetByteArrayElements(target, JNI_FALSE);
-
-    uint8 *argb = reinterpret_cast<uint8 *>(src_data);
+    uint8 *bgra = reinterpret_cast<uint8 *>(src_data);
     uint8 *nv12_y = reinterpret_cast<uint8 *>(dst_data);
     int nv12_y_size = width * height;
     uint8 *nv12_vu = nv12_y + nv12_y_size;
@@ -63,9 +33,43 @@ JNIEXPORT jint JNICALL argb8888ToYuvNV12
 //                   int dst_stride_vu,
 //                   int width,
 //                   int height);
-    libyuv::ARGBToNV12(argb, width * 4,
+
+    //libyuv::ARGBToNV12 接收BGRA
+    libyuv::ARGBToNV12(bgra, width * 4,
                        nv12_y, width,
                        nv12_vu, width,
+                       width, height);
+
+    env->ReleaseByteArrayElements(src, src_data, NULL);
+    env->ReleaseByteArrayElements(target, dst_data, NULL);
+    return JNI_OK;
+}
+
+JNIEXPORT jint JNICALL bgra8888ToYuvNV21
+        (JNIEnv *env, jclass clazz, jbyteArray src, jbyteArray target,
+         jint width, jint height) {
+    jbyte *src_data = env->GetByteArrayElements(src, JNI_FALSE);
+    jbyte *dst_data = env->GetByteArrayElements(target, JNI_FALSE);
+
+    uint8 *bgra = reinterpret_cast<uint8 *>(src_data);
+    uint8 *nv21_y = reinterpret_cast<uint8 *>(dst_data);
+    int nv21_y_size = width * height;
+    uint8 *nv21_vu = nv21_y + nv21_y_size;
+
+
+//    int ARGBToNV21(const uint8_t* src_argb,
+//                   int src_stride_argb,
+//                   uint8_t* dst_y,
+//                   int dst_stride_y,
+//                   uint8_t* dst_vu,
+//                   int dst_stride_vu,
+//                   int width,
+//                   int height);
+
+    //libyuv::ARGBToNV21 接收BGRA
+    libyuv::ARGBToNV21(bgra, width * 4,
+                       nv21_y, width,
+                       nv21_vu, width,
                        width, height);
 
     env->ReleaseByteArrayElements(src, src_data, NULL);
@@ -152,6 +156,7 @@ JNIEXPORT void JNICALL yuvNV12ToBGRA8888(JNIEnv *env, jclass type, jbyteArray nv
     env->ReleaseByteArrayElements(nv21, src_nv12_data, NULL);
 }
 
+
 /**
  *
  * @param env
@@ -219,8 +224,8 @@ void swap_br_in_RGBA_BGRA(uint8 *dataArr, int width, int height) {
 }
 
 JNINativeMethod nativeMethod[] = {
-        {"argb8888ToYuvNV21", "([B[BII)V", (void *) argb8888ToYuvNV21},
-        {"argb8888ToYuvNV12", "([B[BII)V", (void *) argb8888ToYuvNV12},
+        {"bgra8888ToYuvNV21", "([B[BII)V", (void *) bgra8888ToYuvNV21},
+        {"bgra8888ToYuvNV12", "([B[BII)V", (void *) bgra8888ToYuvNV12},
         {"yuvNV12ToRGBA8888", "([B[BII)V", (void *) yuvNV12ToRGBA8888},
         {"yuvNV21ToRGBA8888", "([B[BII)V", (void *) yuvNV21ToRGBA8888},
         {"yuvNV12ToBGRA8888", "([B[BII)V", (void *) yuvNV12ToBGRA8888},

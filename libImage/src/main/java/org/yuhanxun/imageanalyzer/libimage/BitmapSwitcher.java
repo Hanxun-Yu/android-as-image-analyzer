@@ -70,6 +70,13 @@ public class BitmapSwitcher {
             return rgba8888ToABGR8888(bmpRawData, width, height);
         }
 
+        if (src == Format.BGRA_8888 && target == Format.YUV420SP_NV12) {
+            return bgra8888ToNV12(bmpRawData, width, height);
+        }
+        if (src == Format.BGRA_8888 && target == Format.YUV420SP_NV21) {
+            return bgra8888ToNV21(bmpRawData, width, height);
+        }
+
         throw new IllegalArgumentException();
     }
 
@@ -108,6 +115,18 @@ public class BitmapSwitcher {
     private static byte[] nv12ToBGRA8888(byte[] bmpRawData, int width, int height) {
         byte[] ret = new byte[width * height * 4];
         YuvJni.yuvNV12ToBGRA8888(bmpRawData, ret, width, height);
+        return ret;
+    }
+
+    private static byte[] bgra8888ToNV12(byte[] bmpRawData, int width, int height) {
+        byte[] ret = new byte[(int) (width * height * 1.5)];
+        YuvJni.bgra8888ToYuvNV12(bmpRawData, ret, width, height);
+        return ret;
+    }
+
+    private static byte[] bgra8888ToNV21(byte[] bmpRawData, int width, int height) {
+        byte[] ret = new byte[(int) (width * height * 1.5)];
+        YuvJni.bgra8888ToYuvNV21(bmpRawData, ret, width, height);
         return ret;
     }
 

@@ -13,7 +13,7 @@ import java.nio.ByteBuffer;
  */
 public class BitmapAndroid {
     private final static String TAG = "BitmapUtil";
-    public static byte[] argb8888BitmapToByteArr(Bitmap bitmap) {
+    public static byte[] argb8888BitmapToARGB8888(Bitmap bitmap) {
         if (bitmap.getConfig() != Bitmap.Config.ARGB_8888)
             throw new IllegalArgumentException();
 
@@ -39,9 +39,17 @@ public class BitmapAndroid {
         return argb;
     }
 
+
+    /**
+     * bitmap 接收 RGBA
+     *      注：从bitmap取出将是ABGR
+     * @param rawData
+     * @param width
+     * @param height
+     * @return
+     */
     public static Bitmap rgba8888ToBitmap(byte[] rawData, int width,int height) {
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        //bitmap接收 RGBA
         bitmap.copyPixelsFromBuffer(ByteBuffer.wrap(rawData));
         return bitmap;
     }

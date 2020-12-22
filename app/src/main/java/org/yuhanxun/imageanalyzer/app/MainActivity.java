@@ -42,18 +42,24 @@ public class MainActivity extends AppCompatActivity {
 
     private void doTest() {
         logD("doTest()");
-//        testNV21ToBGRA();
-//        testNV21ToRGBA_RGB();
-//        testLibyuvNV21ToARGB();
-        testRGBAToBitmapRender();
+
+//        test_nv21_to_BGRA_bmp();
+//        test_yuvplayer_show_RGB32_RGB24();
+//        test_BGRA_to_nv12();
+//        test_BGRA_to_nv21();
+
     }
 
-    private void testNV21ToRGBA_RGB() {
-        byte[] nv21 = AndroidResRW.getByteArrFromAssets(this, "nv21_150x150.yuv");
-        byte[] rgba8888 = BitmapSwitcher.doSwitch(nv21, 150, 150,
+
+    private void test_yuvplayer_show_RGB32_RGB24() {
+        int w = 150;
+        int h = 150;
+        String assetFileName = "nv21_150x150.yuv";
+        byte[] nv21 = AndroidResRW.getByteArrFromAssets(this, assetFileName);
+        byte[] rgba8888 = BitmapSwitcher.doSwitch(nv21, w, h,
                 BitmapSwitcher.Format.YUV420SP_NV21, BitmapSwitcher.Format.RGBA_8888);
 
-        byte[] rgb888 = BitmapSwitcher.doSwitch(rgba8888, 150, 150,
+        byte[] rgb888 = BitmapSwitcher.doSwitch(rgba8888, w, h,
                 BitmapSwitcher.Format.RGBA_8888, BitmapSwitcher.Format.RGB_888);
 
         /**
@@ -65,16 +71,47 @@ public class MainActivity extends AppCompatActivity {
         writeOverFileToEmmc(rgb888, "rgb888.rgb");
     }
 
-    private void testNV21ToBGRA() {
+    private void test_BGRA_to_nv12() {
+        int w = 150;
+        int h = 150;
+        String assetFileName = "nv21_150x150.yuv";
+        byte[] nv21 = AndroidResRW.getByteArrFromAssets(this, assetFileName);
+        byte[] bgra8888 = BitmapSwitcher.doSwitch(nv21, w, h,
+                BitmapSwitcher.Format.YUV420SP_NV21, BitmapSwitcher.Format.BGRA_8888);
+        byte[] nv12 = BitmapSwitcher.doSwitch(bgra8888, w, h,
+                BitmapSwitcher.Format.BGRA_8888, BitmapSwitcher.Format.YUV420SP_NV12);
+        writeOverFileToEmmc(nv12, "nv12.yuv");
+    }
+
+    private void test_BGRA_to_nv21() {
+        int w = 150;
+        int h = 150;
+        String assetFileName = "nv21_150x150.yuv";
+        byte[] nv21_src = AndroidResRW.getByteArrFromAssets(this, assetFileName);
+        byte[] bgra8888 = BitmapSwitcher.doSwitch(nv21_src, w, h,
+                BitmapSwitcher.Format.YUV420SP_NV21, BitmapSwitcher.Format.BGRA_8888);
+        byte[] nv21 = BitmapSwitcher.doSwitch(bgra8888, w, h,
+                BitmapSwitcher.Format.BGRA_8888, BitmapSwitcher.Format.YUV420SP_NV21);
+        writeOverFileToEmmc(nv21, "nv21.yuv");
+    }
+
+
+    /**
+     *
+     */
+    private void test_nv21_to_BGRA_bmp() {
         //1.nv21文件 转 argb保存文件，使用yuvplayer观察裸数据
-        byte[] nv21 = AndroidResRW.getByteArrFromAssets(this, "nv21_150x150.yuv");
-        byte[] bgra8888 = BitmapSwitcher.doSwitch(nv21, 150, 150,
+        int w = 150;
+        int h = 150;
+        String assetFileName = "nv21_150x150.yuv";
+        byte[] nv21 = AndroidResRW.getByteArrFromAssets(this, assetFileName);
+        byte[] bgra8888 = BitmapSwitcher.doSwitch(nv21, w, h,
                 BitmapSwitcher.Format.YUV420SP_NV21, BitmapSwitcher.Format.BGRA_8888);
 
         //存储位图
         writeOverFileToEmmc(bgra8888, "bgra8888.rgb");
         //存储bmp文件观察
-        ImageFileWrapper.bgra8888ToBmpFile(bgra8888, 150, 150,
+        ImageFileWrapper.bgra8888ToBmpFile(bgra8888, w, h,
                 emmcPath + File.separator + "argb8888.bmp");
 
         logD("OK!");

@@ -57,7 +57,7 @@ public class ExampleInstrumentedTest {
         Bitmap bitmap = BitmapFactory.decodeByteArray(imgFileByteArr, 0, imgFileByteArr.length);
         log("img w:" + bitmap.getWidth() + " h:" + bitmap.getHeight() + "format:" + bitmap.getConfig());
 
-        byte[] argb = BitmapAndroid.argb8888BitmapToByteArr(bitmap);
+        byte[] argb = BitmapAndroid.argb8888BitmapToARGB8888(bitmap);
 
         ImageFileWrapper.argb8888ToBmpFile(argb, 1280, 720, "/sdcard/haha.bmp");
     }
