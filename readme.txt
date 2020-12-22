@@ -1,5 +1,12 @@
 #图片格式学习Project
-#目的在于掌握一些常用图片格式基础知识，以及快速验证
+目的在于掌握一些常用图片格式基础知识，以及快速验证
+研究以下模块数据在内存中的实际序列
+1.libyuv
+2.AndroidBitmap
+3.Bmp文件
+
+
+
 
 need clone modules:
 #android-as-module-lib-common-util
