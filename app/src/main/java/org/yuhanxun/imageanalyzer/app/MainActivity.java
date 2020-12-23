@@ -46,9 +46,15 @@ public class MainActivity extends AppCompatActivity {
 //        test_yuvplayer_show_RGB32_RGB24();
 //        test_BGRA_to_nv12();
 //        test_BGRA_to_nv21();
+
+        //png jpg 有损 无损
 //        testPNGCodecIsLossless();
-        testJPGCodecIsLossless();
-//        testSort_BitmapARGB8888();
+//        testJPGCodecIsLossless();
+
+
+        //bitmap ARGB 排列
+//        testSort_BitmapGetPixelsARGB8888();
+//        testSort_BitmapSetPixelsARGB8888();
     }
 
 
@@ -121,20 +127,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void testRGBAToBitmapRender() {
-        int w = 150;
-        int h = 150;
-        String assetFileName = "nv21_150x150.yuv";
-        //2.把argb塞入 AndroidBitmap，使用ImageView 观察显示
-        byte[] nv21 = AndroidResRW.getByteArrFromAssets(this, assetFileName);
-        byte[] rgba = BitmapSwitcher.doSwitch(nv21, w, h,
-                BitmapSwitcher.Format.YUV420SP_NV21, BitmapSwitcher.Format.RGBA_8888);
-
-        Bitmap bitmap = BitmapAndroid.rgba8888ToBitmap(rgba, w, h);
-
-        this.mImageView.setImageBitmap(bitmap);
-    }
-
     /**
      * 结论
      * libyuv输出的ARGB在内存中是倒序 BGRA
@@ -163,9 +155,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * 验证Bitmap读取出ARGB的顺序
+     * 验证Bitmap getPixels 读取出ARGB的顺序
+     * 结果：ARGB
      */
-    public void testSort_BitmapARGB8888() {
+    public void testSort_BitmapGetPixelsARGB8888() {
         int w = 1280;
         int h = 720;
         String assetFileName = "1280x720.jpg";
@@ -173,6 +166,21 @@ public class MainActivity extends AppCompatActivity {
         Bitmap jpgBitmap = BitmapAndroid.fromByteArr(jpg);
         byte[] rgba = BitmapAndroid.argb8888BitmapToRGBA8888(jpgBitmap);
         ImageFileWrapper.rgba8888ToBmpFile(rgba, w, h, emmcPath + File.separator + "rgba.bmp");
+    }
+
+    /**
+     * 验证Bitmap setPixels 写入ARGB的顺序需要是？
+     * 结果:RGBA
+     */
+    public void testSort_BitmapSetPixelsARGB8888() {
+        int w = 150;
+        int h = 150;
+        String assetFileName = "nv21_150x150.yuv";
+        byte[] nv21 = AndroidResRW.getByteArrFromAssets(this, assetFileName);
+        byte[] rgba = BitmapSwitcher.doSwitch(nv21, w, h, BitmapSwitcher.Format.YUV420SP_NV21, BitmapSwitcher.Format.RGBA_8888);
+        Bitmap bitmap = BitmapAndroid.fromRGBA8888_2(rgba, w, h);
+
+        mImageView.setImageBitmap(bitmap);
     }
 
     /**
@@ -190,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                 BitmapSwitcher.Format.YUV420SP_NV21, BitmapSwitcher.Format.RGBA_8888);
         writeOverFileToEmmc(rgbaSrc, "rgbaSrc.rgb");
         //用这个rgba，构造一个bitmap
-        Bitmap bitmapSrc = BitmapAndroid.rgba8888ToBitmap(rgbaSrc, w, h);
+        Bitmap bitmapSrc = BitmapAndroid.fromRGBA8888(rgbaSrc, w, h);
 
 
         //bitmap编码png
@@ -222,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
                 BitmapSwitcher.Format.YUV420SP_NV21, BitmapSwitcher.Format.RGBA_8888);
         writeOverFileToEmmc(rgbaSrc, "rgbaSrc.rgb");
         //用这个rgba，构造一个bitmap
-        Bitmap bitmapSrc = BitmapAndroid.rgba8888ToBitmap(rgbaSrc, w, h);
+        Bitmap bitmapSrc = BitmapAndroid.fromRGBA8888(rgbaSrc, w, h);
 
 
         //bitmap编码png
@@ -313,7 +321,6 @@ public class MainActivity extends AppCompatActivity {
                             Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                         // 用户拒绝过这个权限了，应该提示用户，为什么需要这个权限。
                         logD("onRequestPermissionsResult !ok");
-
                     }
                 }
             }

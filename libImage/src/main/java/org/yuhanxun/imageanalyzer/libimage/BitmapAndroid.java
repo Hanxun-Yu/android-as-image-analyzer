@@ -112,15 +112,42 @@ public class BitmapAndroid {
 
     /**
      * bitmap 接收 RGBA
-     * 注：从bitmap取出将是ABGR
      *
+     * 一次性写入
      * @param rawData
      * @param width
      * @param height
      * @return
      */
-    public static Bitmap rgba8888ToBitmap(byte[] rawData, int width, int height) {
+    public static Bitmap fromRGBA8888(byte[] rawData, int width, int height) {
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bitmap.copyPixelsFromBuffer(ByteBuffer.wrap(rawData));
+        return bitmap;
+    }
+
+    /**
+     * bitmap 接收 RGBA
+     *
+     * 手工组装color
+     * @param rawData
+     * @param width
+     * @param height
+     * @return
+     */
+    public static Bitmap fromRGBA8888_2(byte[] rawData, int width, int height) {
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                int index = 4 * (row * width + col);
+                byte r = rawData[index];
+                byte g = rawData[index + 1];
+                byte b = rawData[index + 2];
+                byte a = rawData[index + 3];
+                int color = r << 24 + g << 16 + b << 8 + a;
+                bitmap.setPixel(row, col, color);
+            }
+        }
         bitmap.copyPixelsFromBuffer(ByteBuffer.wrap(rawData));
         return bitmap;
     }
