@@ -24,6 +24,24 @@ public class ImageFileWrapper {
         FileRW.write2File(path, rawData);
     }
 
+    public static void bgra8888ToPNGFile(byte[] bgra, int width, int height, String filePath) {
+
+    }
+
+    public static void rgba8888ToBmpFile(byte[] rgba, int width, int height, String filePath) {
+        byte[] bgra = new byte[width * height * 4];
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                int index = 4 * (row * width + col);
+                bgra[index] = rgba[index + 2];
+                bgra[index + 1] = rgba[index + 1];
+                bgra[index + 2] = rgba[index];
+                bgra[index + 3] = rgba[index + 3];
+            }
+        }
+        bgra8888ToBmpFile(bgra, width, height, filePath);
+    }
+
     public static void bgra8888ToBmpFile(byte[] bgra, int width, int height, String filePath) {
         int w = width;
         int h = height;
@@ -93,7 +111,7 @@ public class ImageFileWrapper {
             int bmpRow = h - row - 1;
             for (int col = 0; col < w; col++) {
                 int argbIndex = 4 * (row * w + col);
-                int bmpIndex = row * bmpByteWidth + 3 * col;
+                int bmpIndex = bmpRow * bmpByteWidth + 3 * col;
                 bmpData[bmpIndex] = bgra[argbIndex];
                 bmpData[bmpIndex + 1] = bgra[argbIndex + 1];
                 bmpData[bmpIndex + 2] = bgra[argbIndex + 2];

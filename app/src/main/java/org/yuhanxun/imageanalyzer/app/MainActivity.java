@@ -15,7 +15,6 @@ import androidx.core.app.ActivityCompat;
 import org.yuhanxun.imageanalyzer.libimage.BitmapAndroid;
 import org.yuhanxun.imageanalyzer.libimage.BitmapSwitcher;
 import org.yuhanxun.imageanalyzer.libimage.ImageFileWrapper;
-import org.yuhanxun.libcommonutil.dialog.PayConfirmDialog;
 import org.yuhanxun.libcommonutil.file.AndroidResRW;
 
 import java.io.File;
@@ -47,7 +46,9 @@ public class MainActivity extends AppCompatActivity {
 //        test_yuvplayer_show_RGB32_RGB24();
 //        test_BGRA_to_nv12();
 //        test_BGRA_to_nv21();
-
+//        testPNGCodecIsLossless();
+        testJPGCodecIsLossless();
+//        testSort_BitmapARGB8888();
     }
 
 
@@ -97,7 +98,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     *
+     * 验证nv21 转出 bgra没有问题
+     * 验证bmp文件由bgr从下到上排列
+     * 验证yuvplayer 解析RGB32顺序是RGBA (yuvplayer读取这个bgra8888.rgb，颜色偏紫，由于br顺序交换导致)
      */
     private void test_nv21_to_BGRA_bmp() {
         //1.nv21文件 转 argb保存文件，使用yuvplayer观察裸数据
@@ -112,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         writeOverFileToEmmc(bgra8888, "bgra8888.rgb");
         //存储bmp文件观察
         ImageFileWrapper.bgra8888ToBmpFile(bgra8888, w, h,
-                emmcPath + File.separator + "argb8888.bmp");
+                emmcPath + File.separator + "bgra8888.bmp");
 
         logD("OK!");
     }
@@ -157,6 +160,83 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < bgra.length; i++) {
             logD("i:" + i + " byte:" + bgra[i]);
         }
+    }
+
+    /**
+     * 验证Bitmap读取出ARGB的顺序
+     */
+    public void testSort_BitmapARGB8888() {
+        int w = 1280;
+        int h = 720;
+        String assetFileName = "1280x720.jpg";
+        byte[] jpg = AndroidResRW.getByteArrFromAssets(this, assetFileName);
+        Bitmap jpgBitmap = BitmapAndroid.fromByteArr(jpg);
+        byte[] rgba = BitmapAndroid.argb8888BitmapToRGBA8888(jpgBitmap);
+        ImageFileWrapper.rgba8888ToBmpFile(rgba, w, h, emmcPath + File.separator + "rgba.bmp");
+    }
+
+    /**
+     * 验证Android的png编码是否无损
+     * 结果：无损
+     */
+    public void testPNGCodecIsLossless() {
+        int w = 150;
+        int h = 150;
+        String assetFileName = "nv21_150x150.yuv";
+
+        byte[] nv21 = AndroidResRW.getByteArrFromAssets(this, assetFileName);
+        //原始rgba
+        byte[] rgbaSrc = BitmapSwitcher.doSwitch(nv21, w, h,
+                BitmapSwitcher.Format.YUV420SP_NV21, BitmapSwitcher.Format.RGBA_8888);
+        writeOverFileToEmmc(rgbaSrc, "rgbaSrc.rgb");
+        //用这个rgba，构造一个bitmap
+        Bitmap bitmapSrc = BitmapAndroid.rgba8888ToBitmap(rgbaSrc, w, h);
+
+
+        //bitmap编码png
+        String pathPng = emmcPath + File.separator + "test.png";
+        BitmapAndroid.bitmapToPNGFile(bitmapSrc, pathPng);
+
+        Bitmap bitmapPng = BitmapAndroid.fromPNG(pathPng);
+        //解码png得到rgba
+        byte[] rgbaPng = BitmapAndroid.argb8888BitmapToRGBA8888(bitmapPng);
+        writeOverFileToEmmc(rgbaPng, "rgbaPng.rgb");
+
+        //比较rgbaSrc 与 rgbaPng
+
+        //使用md5校验 与 文件二进制比较， 2串字节数组完全一致
+    }
+
+    /**
+     * 验证Android的jpg最高质量100编码是否无损
+     * 结果：有损 rgba 值前后不一致
+     */
+    public void testJPGCodecIsLossless() {
+        int w = 150;
+        int h = 150;
+        String assetFileName = "nv21_150x150.yuv";
+
+        byte[] nv21 = AndroidResRW.getByteArrFromAssets(this, assetFileName);
+        //原始rgba
+        byte[] rgbaSrc = BitmapSwitcher.doSwitch(nv21, w, h,
+                BitmapSwitcher.Format.YUV420SP_NV21, BitmapSwitcher.Format.RGBA_8888);
+        writeOverFileToEmmc(rgbaSrc, "rgbaSrc.rgb");
+        //用这个rgba，构造一个bitmap
+        Bitmap bitmapSrc = BitmapAndroid.rgba8888ToBitmap(rgbaSrc, w, h);
+
+
+        //bitmap编码png
+        String pathPng = emmcPath + File.separator + "test.jpg";
+        BitmapAndroid.bitmapToJPGFile(bitmapSrc, pathPng);
+
+        Bitmap bitmapPng = BitmapAndroid.fromJPG(pathPng);
+        //解码png得到rgba
+        byte[] rgbaPng = BitmapAndroid.argb8888BitmapToRGBA8888(bitmapPng);
+        writeOverFileToEmmc(rgbaPng, "rgbaJPG.rgb");
+
+        //比较rgbaSrc 与 rgbaJPG
+
+        //使用md5校验 与 文件二进制比较  内容不同
     }
 
 

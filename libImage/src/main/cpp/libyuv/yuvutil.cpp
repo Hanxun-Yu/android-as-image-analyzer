@@ -177,6 +177,7 @@ JNIEXPORT void JNICALL yuvNV21ToRGBA8888(JNIEnv *env, jclass type, jbyteArray nv
     jbyte *src_nv21_y_data = src_nv21_data;
     jbyte *src_nv21_uv_data = src_nv21_data + src_nv21_y_size;
 
+    //return BGRA
     libyuv::NV21ToARGB(
             (uint8 *) src_nv21_y_data, width,
             (uint8 *) src_nv21_uv_data, width,
