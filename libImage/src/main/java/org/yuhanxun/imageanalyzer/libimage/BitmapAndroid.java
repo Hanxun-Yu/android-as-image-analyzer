@@ -111,44 +111,50 @@ public class BitmapAndroid {
 
 
     /**
-     * bitmap 接收 RGBA
-     *
+     * bitmap copyPixelsFromBuffer 接收 RGBA
+     * <p>
      * 一次性写入
+     *
      * @param rawData
      * @param width
      * @param height
      * @return
      */
-    public static Bitmap fromRGBA8888(byte[] rawData, int width, int height) {
+    public static Bitmap fromRGBA8888ByCopyPixelsFromBuffer(byte[] rawData, int width, int height) {
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         bitmap.copyPixelsFromBuffer(ByteBuffer.wrap(rawData));
         return bitmap;
     }
 
     /**
-     * bitmap 接收 RGBA
-     *
+     * bitmap setPixel 接收 ARGB
+     * <p>
      * 手工组装color
+     *
      * @param rawData
      * @param width
      * @param height
      * @return
      */
-    public static Bitmap fromRGBA8888_2(byte[] rawData, int width, int height) {
+    public static Bitmap fromARGB8888BySetPixel(byte[] rawData, int width, int height) {
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
 
         for (int row = 0; row < height; row++) {
             for (int col = 0; col < width; col++) {
                 int index = 4 * (row * width + col);
-                byte r = rawData[index];
-                byte g = rawData[index + 1];
-                byte b = rawData[index + 2];
-                byte a = rawData[index + 3];
-                int color = r << 24 + g << 16 + b << 8 + a;
-                bitmap.setPixel(row, col, color);
+                byte a = rawData[index];//A
+                byte r = rawData[index + 1];//R
+                byte g = rawData[index + 2];//G
+                byte b = rawData[index + 3];//B
+                int color = (a << 24 & 0xff000000)
+                        | (r << 16 & 0x00ff0000)
+                        | (g << 8 & 0x0000ff00)
+                        | (b & 0x000000ff);
+
+                //注意这里接受x，y 等价于 col,row
+                bitmap.setPixel(col, row, color);
             }
         }
-        bitmap.copyPixelsFromBuffer(ByteBuffer.wrap(rawData));
         return bitmap;
     }
 

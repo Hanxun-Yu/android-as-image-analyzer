@@ -50,6 +50,11 @@ public class BitmapSwitcher {
             return nv21ToRGBA8888(bmpRawData, width, height);
         }
 
+        if (src == Format.YUV420SP_NV21 && target == Format.ARGB_8888) {
+            byte[] rgba = nv21ToRGBA8888(bmpRawData, width, height);
+            return rgba8888ToARGB8888(rgba, width, height);
+        }
+
         if (src == Format.YUV420SP_NV12 && target == Format.RGBA_8888) {
             return nv12ToRGBA8888(bmpRawData, width, height);
         }
@@ -89,6 +94,20 @@ public class BitmapSwitcher {
                 ret[index + 1] = bmpRawData[index + 2];//B
                 ret[index + 2] = bmpRawData[index + 1];//G
                 ret[index + 3] = bmpRawData[index];//R
+            }
+        }
+        return ret;
+    }
+
+    public static byte[] rgba8888ToARGB8888(byte[] bmpRawData, int width, int height) {
+        byte[] ret = new byte[width * height * 4];
+        for (int row = 0; row < height; row++) {
+            for (int col = 0; col < width; col++) {
+                int index = 4 * (row * width + col);
+                ret[index + 1] = bmpRawData[index]; //R
+                ret[index + 2] = bmpRawData[index + 1];//G
+                ret[index + 3] = bmpRawData[index + 2];//B
+                ret[index] = bmpRawData[index + 3];//A
             }
         }
         return ret;

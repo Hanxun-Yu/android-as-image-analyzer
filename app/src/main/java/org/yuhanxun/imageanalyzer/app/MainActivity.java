@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         //bitmap ARGB 排列
 //        testSort_BitmapGetPixelsARGB8888();
-//        testSort_BitmapSetPixelsARGB8888();
+        testSort_BitmapSetPixelsARGB8888();
     }
 
 
@@ -177,8 +177,8 @@ public class MainActivity extends AppCompatActivity {
         int h = 150;
         String assetFileName = "nv21_150x150.yuv";
         byte[] nv21 = AndroidResRW.getByteArrFromAssets(this, assetFileName);
-        byte[] rgba = BitmapSwitcher.doSwitch(nv21, w, h, BitmapSwitcher.Format.YUV420SP_NV21, BitmapSwitcher.Format.RGBA_8888);
-        Bitmap bitmap = BitmapAndroid.fromRGBA8888_2(rgba, w, h);
+        byte[] argb = BitmapSwitcher.doSwitch(nv21, w, h, BitmapSwitcher.Format.YUV420SP_NV21, BitmapSwitcher.Format.ARGB_8888);
+        Bitmap bitmap = BitmapAndroid.fromARGB8888BySetPixel(argb, w, h);
 
         mImageView.setImageBitmap(bitmap);
     }
@@ -198,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                 BitmapSwitcher.Format.YUV420SP_NV21, BitmapSwitcher.Format.RGBA_8888);
         writeOverFileToEmmc(rgbaSrc, "rgbaSrc.rgb");
         //用这个rgba，构造一个bitmap
-        Bitmap bitmapSrc = BitmapAndroid.fromRGBA8888(rgbaSrc, w, h);
+        Bitmap bitmapSrc = BitmapAndroid.fromRGBA8888ByCopyPixelsFromBuffer(rgbaSrc, w, h);
 
 
         //bitmap编码png
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
                 BitmapSwitcher.Format.YUV420SP_NV21, BitmapSwitcher.Format.RGBA_8888);
         writeOverFileToEmmc(rgbaSrc, "rgbaSrc.rgb");
         //用这个rgba，构造一个bitmap
-        Bitmap bitmapSrc = BitmapAndroid.fromRGBA8888(rgbaSrc, w, h);
+        Bitmap bitmapSrc = BitmapAndroid.fromRGBA8888ByCopyPixelsFromBuffer(rgbaSrc, w, h);
 
 
         //bitmap编码png

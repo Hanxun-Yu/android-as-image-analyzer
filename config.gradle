@@ -24,6 +24,7 @@ ext {
             "multidex"          : 'com.android.support:multidex:1.0.1',
             "junit"             : 'junit:junit:4.+',
             "android-test"      : ['androidx.test.ext:junit:1.1.1',
+                                   'com.android.support.test:runner:1.0.2',
                                    'androidx.test.espresso:espresso-core:3.2.0'],
             "gson"              : 'com.google.code.gson:gson:2.7'
     ]
