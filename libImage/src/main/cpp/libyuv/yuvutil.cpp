@@ -10,6 +10,7 @@ extern "C" {
 
 void bgra_to_ARGB(uint8 *bgraArr, int width, int height);
 void swap_br_in_RGBA_BGRA(uint8 *bgraArr, int width, int height);
+void swap_br_in_RGB_BGR(uint8 *dataArr, int width, int height);
 
 
 
@@ -98,6 +99,30 @@ JNIEXPORT void JNICALL yuvNV12ToRGBA8888(JNIEnv *env, jclass type, jbyteArray nv
     swap_br_in_RGBA_BGRA(reinterpret_cast<uint8 *>(tar_rgb_data), width, height);
 
     env->ReleaseByteArrayElements(argb8888, tar_rgb_data, NULL);
+    env->ReleaseByteArrayElements(nv12, src_nv12_data, NULL);
+}
+
+JNIEXPORT void JNICALL yuvNV12ToRGB24(JNIEnv *env, jclass type, jbyteArray nv12,
+                                         jbyteArray rgb24,
+                                         jint width, jint height) {
+
+    jbyte *src_nv12_data = env->GetByteArrayElements(nv12, JNI_FALSE);
+    jbyte *tar_rgb_data = env->GetByteArrayElements(rgb24, JNI_FALSE);
+
+    jint src_nv12_y_size = width * height;
+    jbyte *src_nv12_y_data = src_nv12_data;
+    jbyte *src_nv12_uv_data = src_nv12_data + src_nv12_y_size;
+
+    libyuv::NV12ToRGB24(
+            (uint8 *) src_nv12_y_data, width,
+            (uint8 *) src_nv12_uv_data, width,
+            (uint8 *) tar_rgb_data, width * 3,
+            width, height);
+
+    //The ARGB of libyuv is BGRA in memory
+    swap_br_in_RGB_BGR(reinterpret_cast<uint8 *>(tar_rgb_data), width, height);
+
+    env->ReleaseByteArrayElements(rgb24, tar_rgb_data, NULL);
     env->ReleaseByteArrayElements(nv12, src_nv12_data, NULL);
 }
 
@@ -224,10 +249,30 @@ void swap_br_in_RGBA_BGRA(uint8 *dataArr, int width, int height) {
     }
 }
 
+/**
+ * swap b to r, r to b
+ * @param dataArr
+ * @param width
+ * @param height
+ */
+void swap_br_in_RGB_BGR(uint8 *dataArr, int width, int height) {
+    for (int row = 0; row < height; row++) {
+        for (int col = 0; col < width; col++) {
+            int index = 3 * (width * row + col);
+
+            uint8 b = dataArr[index + 2];
+
+            dataArr[index + 2] = dataArr[index]; // r -> b
+            dataArr[index] = b; // b -> r
+        }
+    }
+}
+
 JNINativeMethod nativeMethod[] = {
         {"bgra8888ToYuvNV21", "([B[BII)V", (void *) bgra8888ToYuvNV21},
         {"bgra8888ToYuvNV12", "([B[BII)V", (void *) bgra8888ToYuvNV12},
         {"yuvNV12ToRGBA8888", "([B[BII)V", (void *) yuvNV12ToRGBA8888},
+        {"yuvNV12ToRGB24", "([B[BII)V", (void *) yuvNV12ToRGB24},
         {"yuvNV21ToRGBA8888", "([B[BII)V", (void *) yuvNV21ToRGBA8888},
         {"yuvNV12ToBGRA8888", "([B[BII)V", (void *) yuvNV12ToBGRA8888},
         {"yuvNV21ToBGRA8888", "([B[BII)V", (void *) yuvNV21ToBGRA8888},
