@@ -248,7 +248,6 @@ void swap_br_in_RGBA_BGRA(uint8 *dataArr, int width, int height) {
         }
     }
 }
-
 /**
  * swap b to r, r to b
  * @param dataArr
