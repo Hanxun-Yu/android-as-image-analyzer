@@ -54,7 +54,7 @@ public class BitmapAndroid {
             rgb[i * 3 + 1] = (byte) ((val >> 8) & 0xFF);//G
             rgb[i * 3 + 2] = (byte) (val & 0xFF);//B
         }
-        Log.d(TAG, "r:" + (int) (rgb[0] & 0xff) + " g:" + (int) (rgb[1] & 0xff) + " b:" + (int) (rgb[2] & 0xff));
+//        Log.d(TAG, "r:" + (int) (rgb[0] & 0xff) + " g:" + (int) (rgb[1] & 0xff) + " b:" + (int) (rgb[2] & 0xff));
     }
 
     public static Bitmap fromPNG(String pathPNGFile) {
