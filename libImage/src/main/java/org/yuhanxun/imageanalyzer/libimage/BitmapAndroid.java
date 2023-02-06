@@ -2,13 +2,9 @@ package org.yuhanxun.imageanalyzer.libimage;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.util.Log;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
 
 
@@ -41,7 +37,7 @@ public class BitmapAndroid {
         }
     }
 
-    public static void bitmapToRGB24(Bitmap bitmap) {
+    public static byte[] bitmapToRGB24(Bitmap bitmap) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
         int[] intValues = new int[width * height];
@@ -55,6 +51,7 @@ public class BitmapAndroid {
             rgb[i * 3 + 2] = (byte) (val & 0xFF);//B
         }
 //        Log.d(TAG, "r:" + (int) (rgb[0] & 0xff) + " g:" + (int) (rgb[1] & 0xff) + " b:" + (int) (rgb[2] & 0xff));
+        return rgb;
     }
 
     public static Bitmap fromPNG(String pathPNGFile) {
